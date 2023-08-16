@@ -53,12 +53,34 @@ public class Clubgoer extends Thread {
 
 	//check to see if user pressed pause button
 	private void checkPause() {
-		// THIS DOES NOTHING - MUST BE FIXED  	
-        
+		
+		while(ClubSimulation.getRunState().get()==false){
+			
+		}
+
+		// use a while loop instead!
+		/* 
+		System.out.println(ClubSimulation.getRunState());
+		try {
+            // Your code here
+			if(ClubSimulation.getRunState().get()==false){
+			 System.out.println("SHIT URSELF");
+			 throw new Exception();
+			}                      
+            // Code after the throw statement will not be executed
+        } catch (Exception e) {
+            e.printStackTrace();
+        }	*/
+       
     }
 	private void startSim() {
-		// THIS DOES NOTHING - MUST BE FIXED  	
-        
+		// THIS MIGHT NEED A WHILE LOOP 
+		try {
+			ClubSimulation.latch.await();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}; //wait for latch to open
     }
 	
 	//get drink at bar
@@ -118,7 +140,7 @@ public class Clubgoer extends Thread {
 	}
 	
 	//wandering about  in the club
-		private void wander() throws InterruptedException {		
+	private void wander() throws InterruptedException {		
 			for(int i=0;i<2;i++) { ////wander for two steps
 				int x_mv= rand.nextInt(3)-1; //-1,0 or 1
 				int y_mv= Integer.signum(-rand.nextInt(4)+1); //-1,0 or 1  (more likely to head away from bar)
@@ -142,8 +164,9 @@ public class Clubgoer extends Thread {
 			System.out.println("Thread "+ this.ID + " arrived at club"); //output for checking
 			checkPause(); //check whether have been asked to pause
 			enterClub();
-		
+			//System.out.println(ClubSimulation.getRunState());
 			while (inRoom) {	
+				//System.out.println(ClubSimulation.getRunState());
 				checkPause(); //check every step
 				if((!thirsty)&&(!wantToLeave)) {
 					if (rand.nextInt(100) >95) 

@@ -32,6 +32,10 @@ public class ClubSimulation {
 	private static int maxWait=1200; //for the slowest customer
 	private static int minWait=500; //for the fastest cutomer
 
+	public static AtomicBoolean running = new AtomicBoolean(true);
+	private static int pauseState = 1;
+	public static CountDownLatch latch;
+
 	public static void setupGUI(int frameX,int frameY,int [] exits) {
 		// Frame initialize and dimensions
     	JFrame frame = new JFrame("club animation"); 
@@ -68,7 +72,8 @@ public class ClubSimulation {
 		// add the listener to the jbutton to handle the "pressed" event
 		startB.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e)  {
-			    	  	// THIS DOES NOTHING - MUST BE FIXED  	  
+			    
+				latch.countDown();
 		    }
 		   });
 			
@@ -76,18 +81,24 @@ public class ClubSimulation {
 			
 			// add the listener to the jbutton to handle the "pressed" event
 			pauseB.addActionListener(new ActionListener() {
-		      public void actionPerformed(ActionEvent e) {
-		    		// THIS DOES NOTHING - MUST BE FIXED  	
+		        public void actionPerformed(ActionEvent e) {
+		    		
+					switchRunState();
+					pauseState *= -1;
+					if(pauseState == -1){
+						pauseB.setText("Resume");
+					}
+					else{ pauseB.setText("Pause");}
 		      }
 		    });
 			
 		JButton endB = new JButton("Quit");
 				// add the listener to the jbutton to handle the "pressed" event
-				endB.addActionListener(new ActionListener() {
-			      public void actionPerformed(ActionEvent e) {
-			    	  	System.exit(0);
-			      }
-			    });
+		endB.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
 
 		b.add(startB);
 		b.add(pauseB);
@@ -101,10 +112,9 @@ public class ClubSimulation {
         frame.setVisible(true);	
 	}
 	
-	
-
 	public static void main(String[] args) throws InterruptedException {
 		
+		latch = new CountDownLatch(1);
 		//deal with command line arguments if provided
 		if (args.length==4) {
 			noClubgoers=Integer.parseInt(args[0]);  //total people to enter room
@@ -144,4 +154,17 @@ public class ClubSimulation {
 		}
  	}
 
+	private static void switchPauseButtonState(){
+		pauseState *= -1;
+	}
+
+	public static AtomicBoolean getRunState(){
+		return running;
+	}
+
+	public static synchronized void switchRunState(){
+		boolean state = getRunState().get();
+		state= !state;
+		running.set(state);
+	}
 }

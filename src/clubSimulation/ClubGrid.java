@@ -46,11 +46,11 @@ public class ClubGrid {
 		}
 	}
 	
-		public  int getMaxX() {
+	public  int getMaxX() {
 		return x;
 	}
 	
-		public int getMaxY() {
+	public int getMaxY() {
 		return y;
 	}
 
