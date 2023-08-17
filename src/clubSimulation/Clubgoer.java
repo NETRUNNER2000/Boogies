@@ -41,21 +41,33 @@ public class Clubgoer extends Thread {
 	}
 	
 	//getter
-	public   int getX() { return currentBlock.getX();}	
+	public int getX() { return currentBlock.getX();}	
 	
 	//getter
-	public   int getY() {	return currentBlock.getY();	}
+	public int getY() {	return currentBlock.getY();	}
 	
 	//getter
-	public   int getSpeed() { return movingSpeed; }
+	public int getSpeed() { return movingSpeed; }
 
 	//setter
 
 	//check to see if user pressed pause button
 	private void checkPause() {
 		
-		while(ClubSimulation.getRunState().get()==false){
-			
+		// while(ClubSimulation.getRunState().get()==false){
+		// 	// literally do nothing
+		// }
+
+		synchronized (ClubSimulation.running){
+			while(!ClubSimulation.running.get()){
+				try{
+					ClubSimulation.running.wait();
+				}
+				catch(InterruptedException e)
+				{
+
+				}
+			}
 		}
 
 		// use a while loop instead!
@@ -93,6 +105,9 @@ public class Clubgoer extends Thread {
 		
 	//--------------------------------------------------------
 	//DO NOT CHANGE THE CODE BELOW HERE - it is not necessary
+
+	//#region DONT TOUCH< DUMBASS
+
 	//clubgoer enters club
 	public void enterClub() throws InterruptedException {
 		currentBlock = club.enterClub(myLocation);  //enter through entrance
@@ -139,7 +154,7 @@ public class Clubgoer extends Thread {
 		}
 	}
 	
-	//wandering about  in the club
+	//wandering about in the club
 	private void wander() throws InterruptedException {		
 			for(int i=0;i<2;i++) { ////wander for two steps
 				int x_mv= rand.nextInt(3)-1; //-1,0 or 1
@@ -213,4 +228,5 @@ public class Clubgoer extends Thread {
 		}
 	}
 	
+	//#endregion
 }

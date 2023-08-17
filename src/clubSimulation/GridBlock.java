@@ -35,11 +35,11 @@ public class GridBlock {
 		return true;
 	}
 		
-	public void release() {
+	public synchronized void release() {
 		isOccupied=-1;
 	}
 	
-	public  boolean occupied() {
+	public synchronized boolean occupied() {
 		if(isOccupied==-1) return false;
 		return true;
 	}
@@ -48,10 +48,10 @@ public class GridBlock {
 		return isExit;	
 	}
 
-	public   boolean isBar() {
+	public boolean isBar() {
 		return isBar;
 	}
-	public   boolean isDanceFloor() {
+	public boolean isDanceFloor() {
 		return isDance;
 	}
 

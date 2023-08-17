@@ -27,10 +27,10 @@ public class ClubGrid {
 		this.initGrid(exitBlocks);
 		entrance=Blocks[getMaxX()/2][0];
 		counter=c;
-		}
+	}
 	
 	//initialise the grsi, creating all the GridBlocks
-	private  void initGrid(int []exitBlocks) throws InterruptedException {
+	private void initGrid(int []exitBlocks) throws InterruptedException {
 		for (int i=0;i<x;i++) {
 			for (int j=0;j<y;j++) {
 				boolean exit_block=false;
@@ -46,7 +46,7 @@ public class ClubGrid {
 		}
 	}
 	
-	public  int getMaxX() {
+	public int getMaxX() {
 		return x;
 	}
 	
@@ -72,6 +72,12 @@ public class ClubGrid {
 	
 	public GridBlock enterClub(PeopleLocation myLocation) throws InterruptedException  {
 		counter.personArrived(); //add to counter of people waiting 
+		
+		synchronized(entrance){
+			while(counter.overCapacity()||entrance.occupied()){
+				entrance.wait();
+			}
+		}
 		entrance.get(myLocation.getID());
 		counter.personEntered(); //add to counter
 		myLocation.setLocation(entrance);
@@ -107,11 +113,11 @@ public class ClubGrid {
 	} 
 	
 
-	public  void leaveClub(GridBlock currentBlock,PeopleLocation myLocation)   {
-			currentBlock.release();
-			counter.personLeft(); //add to counter
-			myLocation.setInRoom(false);
-			entrance.notifyAll();
+	public void leaveClub(GridBlock currentBlock,PeopleLocation myLocation)   {
+		currentBlock.release();
+		counter.personLeft(); //add to counter
+		myLocation.setInRoom(false);
+		synchronized(entrance){entrance.notifyAll();};
 	}
 
 	public GridBlock getExit() {

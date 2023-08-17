@@ -22,7 +22,7 @@ public class PeopleCounter {
 		return peopleInside.get();
 	}
 	
-	public int getTotal() {
+	public synchronized int getTotal() {
 		return (peopleOutSide.get()+peopleInside.get()+peopleLeft.get());
 	}
 

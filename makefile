@@ -18,5 +18,5 @@ clean:
 	rm $(BINDIR)/clubSimulation/*.class
 
 run: $(CLASS_FILES)
-	$(JAVA) -cp bin clubSimulation.ClubSimulation 
+	$(JAVA) -cp bin clubSimulation.ClubSimulation 150 25 25 50
 # CLA = total people to enter | no gridx cells | no grid y cells | max people

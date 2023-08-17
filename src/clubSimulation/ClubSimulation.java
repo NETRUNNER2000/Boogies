@@ -83,7 +83,13 @@ public class ClubSimulation {
 			pauseB.addActionListener(new ActionListener() {
 		        public void actionPerformed(ActionEvent e) {
 		    		
-					switchRunState();
+					// switchRunState();
+
+					synchronized (running){
+						switchRunState();
+						running.notifyAll();
+					}
+
 					pauseState *= -1;
 					if(pauseState == -1){
 						pauseB.setText("Resume");
@@ -153,10 +159,6 @@ public class ClubSimulation {
 			patrons[i].start();
 		}
  	}
-
-	private static void switchPauseButtonState(){
-		pauseState *= -1;
-	}
 
 	public static AtomicBoolean getRunState(){
 		return running;
