@@ -28,7 +28,7 @@ public class GridBlock {
 	
 	public  int getY() {return coords[1];}
 	
-	public  boolean get(int threadID) throws InterruptedException {
+	public synchronized boolean get(int threadID) throws InterruptedException {
 		if (isOccupied==threadID) return true; //thread Already in this block
 		if (isOccupied>=0) return false; //space is occupied
 		isOccupied=threadID;  //set ID to thread that had block
