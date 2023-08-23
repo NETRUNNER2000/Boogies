@@ -53,11 +53,9 @@ public class Clubgoer extends Thread {
 
 	//check to see if user pressed pause button
 	private void checkPause() {
-		
-		// while(ClubSimulation.getRunState().get()==false){
-		// 	// literally do nothing
-		// }
-
+		// uses a wait notify to pause this thread if the main program is paused.
+		//obtain the lock on the club simuation boolean before checking run state
+		//run state false when paused, and true when resumed
 		synchronized (ClubSimulation.running){
 			while(!ClubSimulation.running.get()){
 				try{
@@ -65,44 +63,31 @@ public class Clubgoer extends Thread {
 				}
 				catch(InterruptedException e)
 				{
-
+					// literally do nothing
 				}
 			}
 		}
-
-		// use a while loop instead!
-		/* 
-		System.out.println(ClubSimulation.getRunState());
-		try {
-            // Your code here
-			if(ClubSimulation.getRunState().get()==false){
-			 System.out.println("SHIT URSELF");
-			 throw new Exception();
-			}                      
-            // Code after the throw statement will not be executed
-        } catch (Exception e) {
-            e.printStackTrace();
-        }	*/
        
     }
 	private void startSim() {
-		// THIS MIGHT NEED A WHILE LOOP 
+		//all threads are waiting until this latch is no longer in the await state. Exception is called, 
+		//and the error is caught before the program threads execution
 		try {
-			ClubSimulation.latch.await();
+			ClubSimulation.latch.await(); //wait for latch to open
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			//Catch the error and do nothing
 			e.printStackTrace();
-		}; //wait for latch to open
+		}; 
     }
 	
 	//get drink at bar
-		private void getDrink() throws InterruptedException {
-			//FIX SO BARMAN GIVES THE DRINK AND IT IS NOT AUTOMATIC
-			thirsty=false;
-			System.out.println("Thread "+this.ID + " got drink at bar position: " + currentBlock.getX()  + " " +currentBlock.getY() );
-			sleep(movingSpeed*5);  //wait a bit
-		}
-		
+	private void getDrink() throws InterruptedException {
+		//FIX SO BARMAN GIVES THE DRINK AND IT IS NOT AUTOMATIC
+		thirsty=false;
+		System.out.println("Thread "+this.ID + " got drink at bar position: " + currentBlock.getX()  + " " +currentBlock.getY() );
+		sleep(movingSpeed*5);  //wait a bit
+	}
+	
 	//--------------------------------------------------------
 	//DO NOT CHANGE THE CODE BELOW HERE - it is not necessary
 
@@ -124,8 +109,6 @@ public class Clubgoer extends Thread {
 		System.out.println("Thread "+this.ID + " moved toward bar to position: " + currentBlock.getX()  + " " +currentBlock.getY() );
 		sleep(movingSpeed/2);  //wait a bit
 	}
-	
-	
 	
 	//go head towards exit
 	private void headTowardsExit() throws InterruptedException {
@@ -179,9 +162,9 @@ public class Clubgoer extends Thread {
 			System.out.println("Thread "+ this.ID + " arrived at club"); //output for checking
 			checkPause(); //check whether have been asked to pause
 			enterClub();
-			//System.out.println(ClubSimulation.getRunState());
+			//System.out.println(ClubSimulation.getRunState()); // used for testing
 			while (inRoom) {	
-				//System.out.println(ClubSimulation.getRunState());
+				//System.out.println(ClubSimulation.getRunState()); //used for testing
 				checkPause(); //check every step
 				if((!thirsty)&&(!wantToLeave)) {
 					if (rand.nextInt(100) >95) 
