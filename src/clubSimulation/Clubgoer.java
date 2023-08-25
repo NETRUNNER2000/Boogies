@@ -18,7 +18,7 @@ public class Clubgoer extends Thread {
 	private int movingSpeed;
 	
 	private PeopleLocation myLocation;
-	private AtomicBoolean inRoom;
+	private boolean inRoom;
 	private boolean thirsty;
 	private boolean wantToLeave;
 	
@@ -29,7 +29,7 @@ public class Clubgoer extends Thread {
 		this.ID=ID;
 		movingSpeed=speed; //range of speeds for customers
 		this.myLocation = loc; //for easy lookups
-		inRoom=new AtomicBoolean(false); //not in room yet
+		inRoom=false; //not in room yet
 		thirsty=true; //thirsty when arrive
 		wantToLeave=false;	 //want to stay when arrive
 		rand=new Random();
@@ -37,7 +37,7 @@ public class Clubgoer extends Thread {
 	
 	//getter
 	public  boolean inRoom() {
-		return inRoom.get();
+		return inRoom;
 	}
 	
 	//getter
@@ -96,7 +96,7 @@ public class Clubgoer extends Thread {
 	//clubgoer enters club
 	public void enterClub() throws InterruptedException {
 		currentBlock = club.enterClub(myLocation);  //enter through entrance
-		inRoom.set(true);;
+		inRoom=true;
 		System.out.println("Thread "+this.ID + " entered club at position: " + currentBlock.getX()  + " " +currentBlock.getY() );
 		sleep(movingSpeed/2);  //wait a bit at door
 	}
@@ -151,7 +151,7 @@ public class Clubgoer extends Thread {
 	//leave club
 	private synchronized void leave() throws InterruptedException {
 		club.leaveClub(currentBlock,myLocation);		
-		inRoom.set(false);
+		inRoom=false;
 	}
 	
 	public void run() {
@@ -165,7 +165,7 @@ public class Clubgoer extends Thread {
 			checkPause(); //check whether have been asked to pause
 			enterClub();
 			//System.out.println(ClubSimulation.getRunState()); // used for testing
-			while (inRoom.get()) {	
+			while (inRoom) {	
 				//System.out.println(ClubSimulation.getRunState()); //used for testing
 				checkPause(); //check every step
 				if((!thirsty)&&(!wantToLeave)) {

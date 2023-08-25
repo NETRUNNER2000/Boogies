@@ -12,7 +12,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ClubSimulation {
-	static int noClubgoers=80;
+	static int noClubgoers=100;
    	static int frameX=400;
 	static int frameY=500;
 	static int yLimit=400;
@@ -29,8 +29,8 @@ public class ClubSimulation {
 	static ClubGrid clubGrid; // club grid
 	static CounterDisplay counterDisplay ; //threaded display of counters
 	
-	private static int maxWait=500; //for the slowest customer
-	private static int minWait=10; //for the fastest cutomer
+	private static int maxWait=100; //1200 //for the slowest customer
+	private static int minWait=10; //500 //for the fastest cutomer
 
 	public static AtomicBoolean running = new AtomicBoolean(true);
 	private static int pauseState = 1;
@@ -72,7 +72,7 @@ public class ClubSimulation {
 		// add the listener to the jbutton to handle the "pressed" event
 		startB.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e)  {
-			    
+			    // open the latch, to allow all threads to start running
 				latch.countDown();
 		    }
 		   });
@@ -82,14 +82,13 @@ public class ClubSimulation {
 			// add the listener to the jbutton to handle the "pressed" event
 			pauseB.addActionListener(new ActionListener() {
 		        public void actionPerformed(ActionEvent e) {
-		    		
-					// switchRunState();
-
+		    		//pause or resume the programme, by switching the state of the atomic boolean
+					// notify all waitin threads once the boolean has been changed
 					synchronized (running){
 						switchRunState();
 						running.notifyAll();
 					}
-
+					//GUI Code to change button labels correctly
 					pauseState *= -1;
 					if(pauseState == -1){
 						pauseB.setText("Resume");
@@ -119,7 +118,7 @@ public class ClubSimulation {
 	}
 	
 	public static void main(String[] args) throws InterruptedException {
-		
+		//Create new latch object to control the exectution of threads
 		latch = new CountDownLatch(1);
 		//deal with command line arguments if provided
 		if (args.length==4) {
@@ -160,10 +159,12 @@ public class ClubSimulation {
 		}
  	}
 
+	//Its a getter. its not that deep
 	public static AtomicBoolean getRunState(){
 		return running;
 	}
 
+	//Pause or resume the program, by switching the atomic boolean
 	public static synchronized void switchRunState(){
 		boolean state = getRunState().get();
 		state= !state;

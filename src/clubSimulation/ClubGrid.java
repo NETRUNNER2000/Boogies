@@ -29,7 +29,7 @@ public class ClubGrid {
 		counter=c;
 	}
 	
-	//initialise the grsi, creating all the GridBlocks
+	//initialise the grid, creating all the GridBlocks
 	private void initGrid(int []exitBlocks) throws InterruptedException {
 		for (int i=0;i<x;i++) {
 			for (int j=0;j<y;j++) {
@@ -70,24 +70,24 @@ public class ClubGrid {
 		return true;
 	}
 	
-	public GridBlock enterClub(PeopleLocation myLocation) throws InterruptedException  {
-		counter.personArrived(); //add to counter of people waiting 
-		
-		synchronized(entrance){ // block the entract if the club is full or someone is occupying the entrance
-			while(counter.overCapacity()||!entrance.get(myLocation.getID())){
+	//Only allow new clubgoers into the club if the club has space and nobody is occupying the entrance
+	public GridBlock enterClub(PeopleLocation myLocation) throws InterruptedException  {	
+		 // block the entract if the club is full or someone is occupying the entrance
+			 synchronized(entrance){
+				counter.personArrived(); //add to counter of people waiting 
+				while(counter.overCapacity()|| !entrance.get(myLocation.getID())){
 				entrance.wait();
 			}
-		
 			entrance.get(myLocation.getID());
 			counter.personEntered(); //add to counter
-			myLocation.setLocation(entrance);
+			myLocation.setLocation(entrance); //move onto the entrace block
 			myLocation.setInRoom(true);
-			
+			return entrance;
 		}
-		return entrance;
 	}
+
 	
-	
+	//Move clubgoer to new grid block, while checking for entrance notify conditions.
 	public GridBlock move(GridBlock currentBlock,int step_x, int step_y,PeopleLocation myLocation) throws InterruptedException {  //try to move in 
 		
 		int c_x= currentBlock.getX();
@@ -108,22 +108,34 @@ public class ClubGrid {
 		GridBlock newBlock = Blocks[new_x][new_y];
 		
 		if (!newBlock.get(myLocation.getID())) return currentBlock; //stay where you are
+		
+		//code runs when we are the clubgoer is about to move
+		//we check if the current clubgoer is on the entrance. if they are, tell the entrace to open.
+		synchronized(entrance){
 			
-		currentBlock.release(); //must release current block
-		myLocation.setLocation(newBlock);
-		return newBlock;
+			currentBlock.release(); //must release current block
+			if(currentBlock.equals(entrance)){	// check if on entrace, and notify		
+				entrance.notifyAll();
+			}
+			myLocation.setLocation(newBlock);
+			return newBlock;
+		}			
 	} 
 	
-
+	//Remove clubgoer from the simulation. This decrememnts the amount of people in the club and
+	//increases the counter for people that have left
+	//this method must notify the entrace object to open and allow a new thread to enter.
 	public void leaveClub(GridBlock currentBlock,PeopleLocation myLocation)   {
-
-		synchronized(entrance){
+		try{
 			currentBlock.release();
 			counter.personLeft(); //add to counter
 			myLocation.setInRoom(false);
 			entrance.notifyAll(); //open the entrance and allow a new person in
 		}
+		catch(Exception e){
+			//catch exception. do nothing
 		}
+	}
 
 	public GridBlock getExit() {
 		return exit;

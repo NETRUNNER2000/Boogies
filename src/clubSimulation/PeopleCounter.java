@@ -14,19 +14,20 @@ public class PeopleCounter {
 		maxPeople=new AtomicInteger(max);
 	}
 		
-	public synchronized int getWaiting() {
+	public int getWaiting() {
 		return peopleOutSide.get();
 	}
 
-	public synchronized int getInside() {
+	public int getInside() {
 		return peopleInside.get();
 	}
 	
+	//needs to be synchronised as this method is compound
 	public synchronized int getTotal() {
 		return (peopleOutSide.get()+peopleInside.get()+peopleLeft.get());
 	}
 
-	public synchronized int getLeft() {
+	public int getLeft() {
 		return peopleLeft.get();
 	}
 	
