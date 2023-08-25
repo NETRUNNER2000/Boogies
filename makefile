@@ -1,3 +1,4 @@
+#ADMSHA064 Makefile
 JAVAC=/usr/bin/javac
 JAVA=/usr/bin/java
 .SUFFIXES: .java .class
@@ -5,7 +6,7 @@ SRCDIR=src/clubSimulation
 BINDIR=bin
 
 $(BINDIR)/%.class:$(SRCDIR)/%.java
-	$(JAVAC) -d $(BINDIR)/ -cp $(BINDIR) $<
+	$(JAVAC) -d $(BINDIR)/ -cp $(BINDIR) -sourcepath $(SRCDIR)/*.java $<
 
 CLASSES= ClubGrid.class / Clubgoer.class / ClubView.class / CounterDisplay.class  / GridBlock.class / PeopleCounter.class / PeopleLocation.class / ClubSimulation.class / 
 

@@ -58,7 +58,7 @@ public class ClubGrid {
 		return entrance;
 	}
 
-	public  boolean inGrid(int i, int j) {
+	public boolean inGrid(int i, int j) {
 		if ((i>=x) || (j>=y) ||(i<0) || (j<0)) 
 			return false;
 		return true;

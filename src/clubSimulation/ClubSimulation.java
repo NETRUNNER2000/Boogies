@@ -29,8 +29,8 @@ public class ClubSimulation {
 	static ClubGrid clubGrid; // club grid
 	static CounterDisplay counterDisplay ; //threaded display of counters
 	
-	private static int maxWait=1200; //for the slowest customer
-	private static int minWait=500; //for the fastest cutomer
+	private static int maxWait=800; //for the slowest customer
+	private static int minWait=200; //for the fastest cutomer
 
 	public static AtomicBoolean running = new AtomicBoolean(true);
 	private static int pauseState = 1;
