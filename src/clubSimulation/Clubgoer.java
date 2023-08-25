@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  This is the basic ClubGoer Thread class, representing the patrons at the club
  */
 
-public class Clubgoer extends Thread {
+public class Clubgoer extends Thread  {
 	
 	public static ClubGrid club; //shared club
 
